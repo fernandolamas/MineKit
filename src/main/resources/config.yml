@@ -1,0 +1,5 @@
+#remove an effect to disable them, then reload the plugin.
+#Available effects: fight, arrow
+allowedEffects:
+  - fight
+  - arrow

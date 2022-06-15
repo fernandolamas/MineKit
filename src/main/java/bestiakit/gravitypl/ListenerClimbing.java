@@ -13,14 +13,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-public class ListenerClimbing extends gravitypl implements Listener{
-	
-	gravitypl plugin;
-	public ListenerClimbing(gravitypl plugin)
-	{
-		this.plugin = plugin;
-		plugin.getServer().getPluginManager().registerEvents(this, plugin);
-	}
+public class ListenerClimbing implements Listener{
 	
 	@EventHandler
 	public void playerClimbingWithPickaxe(PlayerInteractEvent e)

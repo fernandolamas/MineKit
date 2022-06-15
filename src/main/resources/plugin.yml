@@ -1,3 +1,8 @@
-name: "Gravitypl"
-main: "bestiakit.gravitypl.gravitypl"
+name: "BestiaKit"
+main: "bestiakit.gravitypl.BestiaKit"
 version: "1.0"
+commands:
+  bestiakit:
+    description: THISISH A RILOUD COMAN
+    usage: /bestiakit reload
+    

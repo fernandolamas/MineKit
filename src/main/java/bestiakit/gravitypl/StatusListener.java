@@ -1,5 +1,7 @@
 package bestiakit.gravitypl;
 
+import java.util.List;
+
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -11,14 +13,23 @@ import org.bukkit.potion.PotionEffectType;
 
 public class StatusListener implements Listener{
 	
+	boolean isAllowedFightEffects;
+	boolean isAllowedArrowEffects;
 
-	gravitypl plugin;
-	public StatusListener(gravitypl plugin)
-	{
-		this.plugin = plugin;
-		plugin.getServer().getPluginManager().registerEvents(this, plugin);
-	} 
-	
+	public StatusListener(List<String> effects) {
+		for (String s : effects)
+		{
+			if(s.equals("fight"))
+			{
+				isAllowedFightEffects = true;
+			}
+			if(s.equals("arrow"))
+			{
+				isAllowedArrowEffects = true;
+			}
+		}
+	}
+
 	public void applyPotionsDuringFight(Player damagerPlayer,Player takerPlayer)
 	{
 		takerPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SPEED,40,1));
@@ -28,11 +39,6 @@ public class StatusListener implements Listener{
 		}else {
 			takerPlayer.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 40, 10));
 		}
-		if(damagerPlayer.hasPotionEffect(PotionEffectType.INCREASE_DAMAGE))
-		{
-			return;
-		}
-		damagerPlayer.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 50, 1));
 		
 		if(damagerPlayer.getWorld().hasStorm())
 		{
@@ -43,6 +49,12 @@ public class StatusListener implements Listener{
 
 	@EventHandler
 	public void playerHitedAnotherPlayer(EntityDamageByEntityEvent e) {
+		
+		if(!isAllowedFightEffects)
+		{
+			return;
+		}
+		
 		Entity damager = e.getDamager();
 		Entity damageTaker = e.getEntity();
 		
@@ -58,7 +70,7 @@ public class StatusListener implements Listener{
 		Player takerPlayer = (Player) damageTaker;
 		Player damagerPlayer = (Player) damager;
 		
-		RandomBoolean rBool = new RandomBoolean();
+		Random rBool = new Random();
 		if(rBool.randomOpportunity())
 		{
 			applyPotionsDuringFight(damagerPlayer, takerPlayer);
@@ -69,6 +81,10 @@ public class StatusListener implements Listener{
 	@EventHandler
 	public void playerBeignHitByArrowInTheHead(EntityDamageByEntityEvent e)
 	{
+		if(!isAllowedArrowEffects)
+		{
+			return;
+		}
 		Entity player = e.getEntity();
 		Entity arrow = e.getDamager();
 		
