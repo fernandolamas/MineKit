@@ -1,6 +1,6 @@
 name: "BestiaKit"
-main: "bestiakit.gravitypl.BestiaKit"
-version: "1.0"
+main: "bestiakit.gravitypl.MineKit"
+version: "2.0"
 commands:
   bestiakit:
     description: THISISH A RILOUD COMAN

@@ -1,5 +1,17 @@
 #remove an effect to disable them, then reload the plugin.
 #Available effects: fight, arrow
 allowedEffects:
-  - fight
-  - arrow
+  - fight # when player fightint another player
+  - arrow # when beign hit by an arrow
+  - respawn # when respawning
+  - teleport # right after teleporting by plugin, nether portal or end portal
+#Allows the player to climb {Number} times agaisnt a wall of stone
+pickaxeClimbingTimesAllowed: 1
+pickaxeClimbingDebugMode: False
+LightningCreeperIsEnabled: True
+PickaxeClimbingIsEnabled: True
+
+#Remove a nightmare to disable them
+allowedNightmares:
+  - arrowsOnTheBed
+  - fallingNightmare

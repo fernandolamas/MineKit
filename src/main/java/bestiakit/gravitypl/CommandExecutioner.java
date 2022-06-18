@@ -5,26 +5,25 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 public class CommandExecutioner implements CommandExecutor {
-	private final BestiaKit plugin;
+	private final MineKit plugin;
 
-	public CommandExecutioner(BestiaKit plugin) {
+	public CommandExecutioner(MineKit plugin) {
 		this.plugin = plugin;
 	}
 
+	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
 	{
-		if(!cmd.getName().equalsIgnoreCase("bestiakit") && args[0].equalsIgnoreCase("reload")) {
-			return false;
-		}
-		if(!(sender.isOp() || sender.getName().equalsIgnoreCase("Fer")))
+		if(!cmd.getName().equalsIgnoreCase("bestiakit") && args[0].equalsIgnoreCase("reload")) return false;
+		if(!sender.isOp())
 		{
 			sender.sendMessage(">:( y el OP?");
 			return false;
 		}
 		sender.sendMessage(":)");
 		plugin.reloadConfig();
-		plugin.getServer().getPluginManager().disablePlugin(plugin);
-		plugin.getServer().getPluginManager().enablePlugin(plugin);
+		//plugin.getServer().getPluginManager().disablePlugin(plugin);
+		//plugin.getServer().getPluginManager().enablePlugin(plugin);
 		return true;
 	}
 }
