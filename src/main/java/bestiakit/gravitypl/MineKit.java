@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
+import bestiakit.gravitypl.SteveArrows.SteveArrowsListener;
+
 
 public class MineKit extends JavaPlugin {
 	
@@ -19,16 +21,21 @@ public class MineKit extends JavaPlugin {
 		String PickaxeClimbingIsEnabled = this.getConfig().getString("PickaxeClimbingIsEnabled");
 		
 		String LightningCreeperIsEnabled = this.getConfig().getString("LightningCreeperIsEnabled");
+		String creeperProbConfig = this.getConfig().getString("CreeperProbabilityToGetLighted");
+		
+		String isSnowEnabledConfig = this.getConfig().getString("SnowCustomFrostDamageEnabled");
+		
 		
 		List<String> nightmareList = this.getConfig().getStringList("allowedNightmares");
 		
 		getServer().getPluginManager().registerEvents(new ListenerClimbing(PickaxeClimbingCD, PickaxeClimbingDebugMode, PickaxeClimbingIsEnabled, this), this);
 		getServer().getPluginManager().registerEvents(new StatusListener(effectslist, this), this);
 		getServer().getPluginManager().registerEvents(new ListenerNightmares(this, nightmareList), this);
-		getServer().getPluginManager().registerEvents(new LightningCreeperListener(LightningCreeperIsEnabled,this), this);
+		getServer().getPluginManager().registerEvents(new LightningCreeperListener(LightningCreeperIsEnabled, creeperProbConfig,this), this);
+		getServer().getPluginManager().registerEvents(new SteveArrowsListener(this),this);
+		getServer().getPluginManager().registerEvents(new ListenerSnow(this, isSnowEnabledConfig), this);
 		
 		this.getCommand("bestiakit").setExecutor(new CommandExecutioner(this));
-		
 	} 
 	
 	@Override

@@ -1,5 +1,5 @@
-name: "BestiaKit"
-main: "bestiakit.gravitypl.MineKit"
+name: BestiaKit
+main: bestiakit.gravitypl.MineKit
 version: "2.0"
 commands:
   bestiakit:

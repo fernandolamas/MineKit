@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
@@ -16,9 +17,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -74,7 +77,7 @@ public class StatusListener implements Listener{
 		Player takerPlayer = (Player) damageTaker;
 		Player damagerPlayer = (Player) damager;
 		
-		if(takerPlayer.getLastDamageCause().equals(null)) return;
+		if(takerPlayer.getLastDamageCause() == null) return;
 		
 		Random rBool = new Random();
 		
@@ -167,6 +170,37 @@ public class StatusListener implements Listener{
             }
         }.runTaskLater(plugin, 5);
 
+	}
+	
+	@EventHandler
+	public void playerGivesToAnotherPlayer(EntityPickupItemEvent e)
+	{
+		if(!(e.getEntity() instanceof Player)) return;
+		
+		Player p = (Player)e.getEntity();
+		
+		ItemStack pickedItem = e.getItem().getItemStack();
+		if(!(pickedItem.getType() instanceof Material)) return;
+		Material m = pickedItem.getType();
+		
+		if(m == Material.DIAMOND 
+		//|| m == Material.DANDELION 
+		//|| m == Material.POPPY
+		//|| m == Material.SUNFLOWER
+		//|| m == Material.ROSE_BUSH
+		//|| m == Material.CORNFLOWER
+				)
+		{
+        	for(int i = 0;i < 100; i++)
+        	{
+        		Location pLoc = p.getLocation();
+        		pLoc.setY(pLoc.getY()+1);
+        		p.spawnParticle(Particle.HEART,pLoc, 2, 0.5, 0.5, 0.5);
+        	}
+		}
+		
+		
+			
 	}
 	
 	@EventHandler

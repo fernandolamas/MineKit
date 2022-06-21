@@ -14,15 +14,19 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BlockIterator;
 
 public class LightningCreeperListener implements Listener{
 	
 	boolean isEnabled = true;
+	int creeperProbability = 100;
 	
-	public LightningCreeperListener(String isEnabledLC,Plugin pl) 
+	public LightningCreeperListener(String isEnabledLC,String creeperProbConfig,Plugin pl) 
 	{
 		isEnabled = Boolean.parseBoolean(isEnabledLC);
+		creeperProbability = Integer.parseInt(creeperProbConfig);
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -40,9 +44,11 @@ public class LightningCreeperListener implements Listener{
 		if(creeper.isPowered()) return;
 		Random random = new Random();
 		
-		if(!random.randomOpportunity()) return;
+		//probabilidad
+		if(random.randomNumber(creeperProbability) != 2) return;
 		
 		e.getWorld().strikeLightning(e.getLocation());
+		creeper.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION,60,2));
 			
 	}
 	

@@ -9,7 +9,9 @@ allowedEffects:
 pickaxeClimbingTimesAllowed: 1
 pickaxeClimbingDebugMode: False
 LightningCreeperIsEnabled: True
+CreeperProbabilityToGetLighted: 100
 PickaxeClimbingIsEnabled: True
+SnowCustomFrostDamageEnabled: True
 
 #Remove a nightmare to disable them
 allowedNightmares:
