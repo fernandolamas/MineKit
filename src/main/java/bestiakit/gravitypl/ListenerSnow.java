@@ -37,7 +37,7 @@ public class ListenerSnow implements Listener {
 		Biome b = p.getWorld().getBiome(p.getLocation());
 
 		if (!(b == Biome.SNOWY_BEACH || b == Biome.SNOWY_PLAINS || b == Biome.SNOWY_SLOPES || b == Biome.SNOWY_TAIGA
-				|| b == Biome.GROVE))
+				|| b == Biome.GROVE || b == Biome.ICE_SPIKES))
 			return;
 		Location loc = (Location) e.getFrom();
 

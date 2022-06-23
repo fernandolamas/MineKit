@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
+import org.bukkit.Effect;
 import org.bukkit.Location;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -14,31 +16,37 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent.BedEnterResult;
 import org.bukkit.event.player.PlayerBedLeaveEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 import net.md_5.bungee.api.ChatColor;
 
 public class ListenerNightmares implements Listener {
 
 	Plugin plugin;
-	boolean arrowsOnTheBedNightmareIsEnabled = true;
-	boolean fallingNightmareIsEnabled = true;
+	private boolean arrowsOnTheBedNightmareIsEnabled = true;
+	private boolean fallingNightmareIsEnabled;
 	private boolean playerIsHavingNightmare;
+	private boolean mobsOnTheBed;
+	private boolean paralisisIsEnabled;
 
 	public ListenerNightmares(Plugin plugin, List<String> allowedNightmares) {
 		this.plugin = plugin;
 
 		for (String s : allowedNightmares) {
-			if (s.equals("arrowsOnTheBed"))
+			if (s.equalsIgnoreCase("arrowsOnTheBed"))
 				arrowsOnTheBedNightmareIsEnabled = true;
-			if (s.equals("fallingNightmare"))
+			if (s.equalsIgnoreCase("fallingNightmare"))
 				fallingNightmareIsEnabled = true;
+			if (s.equalsIgnoreCase("mobsOnTheBed"))
+				mobsOnTheBed = true;
+			if (s.equalsIgnoreCase("paralisis"))
+				paralisisIsEnabled = true;
 		}
 	}
 
@@ -46,11 +54,14 @@ public class ListenerNightmares implements Listener {
 		if (!arrowsOnTheBedNightmareIsEnabled)
 			return;
 
-		double nloc = player.getLocation().getY() + 2;
-		loc.setY(nloc);
-		// todo: cannot spawn arrow with null velocity
-		// player.getWorld().spawnArrow(loc, null, 1, 0);
+		double nLoc = player.getLocation().getY() + 2;
+		loc.setY(nLoc);
+		Vector nV = loc.getDirection().clone();
 
+		for (int i = 0; i <= 2; i++) {
+			player.getWorld().spawnArrow(loc, nV, 0.6f, 12f);
+			player.playEffect(player.getLocation(), Effect.FIREWORK_SHOOT, null);
+		}
 	}
 
 	public void nightmareFalling(Player player, PlayerBedEnterEvent e, Location loc) {
@@ -84,12 +95,15 @@ public class ListenerNightmares implements Listener {
 	}
 
 	public void nightmareParalisis(Player p, PlayerBedEnterEvent e) {
+		if (!paralisisIsEnabled)
+			return;
 		// p.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE,80,1));
 		p.setFireTicks(80);
 	}
 
 	private void nightmareSummoning(Player p) {
-		//TODO: no es suficiente una poción de invisibilidad. hay que hacer inmune al player.
+		if (!mobsOnTheBed)
+			return;
 		p.setInvulnerable(true);
 		EntityType nightmareMob;
 		Random r = new Random();
@@ -118,12 +132,12 @@ public class ListenerNightmares implements Listener {
 			public void run() {
 				plugin.getLogger().log(Level.INFO, "despawning mobs");
 				for (Entity s : mobsSpawnedDuringNightmare) {
-					if (s.getType() == nightmareMob)
-					{
+					if (s.getType() == nightmareMob) {
 						plugin.getLogger().log(Level.INFO, "despawned" + s.getType());
 						s.remove();
 						p.setInvulnerable(false);
-						if(p.isOnline());
+						if (p.isOnline())
+							;
 					}
 				}
 			}
@@ -159,16 +173,15 @@ public class ListenerNightmares implements Listener {
 
 		Random random = new Random();
 
-		//DESCOMENTAR ANTES DE DEPLOYAR if(random.randomNumber(10) != 2) return;
+		if (random.randomNumber(7) != 2)
+			return;
 		playerIsHavingNightmare = true;
-		
+
 		Location loc = (Location) sleeper.getLocation();
 		new BukkitRunnable() {
 			@Override
 			public void run() {
 				int r = random.randomNumber(4);
-				r = 3;
-				sleeper.sendMessage("Random number is: " + r);
 				newNightmare(sleeper, r, e, loc);
 			}
 		}.runTaskLater(plugin, 40);
@@ -181,60 +194,65 @@ public class ListenerNightmares implements Listener {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				if(e.getPlayer().isOnline()) playerIsHavingNightmare = false;
+				if (e.getPlayer().isOnline())
+					playerIsHavingNightmare = false;
 			}
 		}.runTaskLater(plugin, 120);
 		e.setCancelled(true);
 	}
+
 	@EventHandler
-	public void playerDamagedDuringSleep(EntityDamageByEntityEvent  e)
-	{
-		if(!(playerIsHavingNightmare)) return;
-		if(!(e.getEntity() instanceof Player)) return;
+	public void playerDamagedDuringSleep(EntityDamageByEntityEvent e) {
+		if (!(playerIsHavingNightmare))
+			return;
+
+		if (!(e.getEntity() instanceof Player))
+			return;
+
+		if (e.getDamager() instanceof Arrow)
+			return;
+
 		e.setDamage(0);
 		e.setCancelled(true);
 	}
-	
+
 	Location pDisconnectedLoc;
+
 	@EventHandler
-	public void playerDisconnectedDuringNightmare(PlayerQuitEvent e)
-	{
-		Player p = (Player)e.getPlayer();
-		if(p.isOp()) return;
+	public void playerDisconnectedDuringNightmare(PlayerQuitEvent e) {
+		Player p = (Player) e.getPlayer();
+		if (p.isOp())
+			return;
 		p.setInvulnerable(false);
-		pDisconnectedLoc = (Location)p.getLocation();
+		pDisconnectedLoc = (Location) p.getLocation();
 	}
-	
+
+	boolean chunkIsLoaded = true;
+
 	@EventHandler
-	public void playerReconnectedDuringNightmare(ChunkUnloadEvent e)
-	{
-		if(!playerIsHavingNightmare) return;
-		if(pDisconnectedLoc == null) return;
+	public void playerReconnectedDuringNightmare(ChunkUnloadEvent e) {
+		if (!chunkIsLoaded)
+			return;
+		if (!playerIsHavingNightmare)
+			return;
+		if (pDisconnectedLoc == null)
+			return;
 		e.getChunk().load();
-		
-		//TODO: test if loads and unload chunk correctly
-		plugin.getLogger().log(Level.INFO," chunk reloaded by player disconnected during nightmare at location: " + pDisconnectedLoc);
+
+		// TODO: test if loads and unload chunk correctly
+		plugin.getLogger().log(Level.INFO,
+				" chunk reloaded by player disconnected during nightmare at location: " + pDisconnectedLoc);
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				boolean isUnloaded = false;
-				Exception error = null;
-				try {
-					isUnloaded = e.getChunk().unload(true);
-				} catch (Exception e2) {
-					error = e2;
-				}
-				if(isUnloaded)
-				{
-					plugin.getLogger().log(Level.INFO," chunk unloaded successfully " + pDisconnectedLoc);
-				}else {
-					plugin.getLogger().log(Level.WARNING," error unloading chunk at " + pDisconnectedLoc + " due to error: "+ error.getMessage());
-				}
-
+				if (!chunkIsLoaded)
+					return;
+				plugin.getLogger().log(Level.INFO, " Unloading chunk at location: " + pDisconnectedLoc);
+				e.getChunk().unload(true);
+				chunkIsLoaded = false;
 			}
 		}.runTaskLater(plugin, 200);
-		
+
 	}
-	
 
 }

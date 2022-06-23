@@ -17,3 +17,5 @@ SnowCustomFrostDamageEnabled: True
 allowedNightmares:
   - arrowsOnTheBed
   - fallingNightmare
+  - paralisis
+  - mobsOnTheBed
