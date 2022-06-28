@@ -15,6 +15,7 @@ public class MineKit extends JavaPlugin {
 	{
 		this.saveDefaultConfig();
 		List<String> effectslist = this.getConfig().getStringList("allowedEffects");
+		String amountOfParticlesHearth = this.getConfig().getString("amountOfParticlesHearth");
 		
 		String PickaxeClimbingCD = this.getConfig().getString("pickaxeClimbingTimesAllowed");
 		String PickaxeClimbingDebugMode = this.getConfig().getString("pickaxeClimbingDebugMode");
@@ -29,11 +30,12 @@ public class MineKit extends JavaPlugin {
 		List<String> nightmareList = this.getConfig().getStringList("allowedNightmares");
 		
 		getServer().getPluginManager().registerEvents(new ListenerClimbing(PickaxeClimbingCD, PickaxeClimbingDebugMode, PickaxeClimbingIsEnabled, this), this);
-		getServer().getPluginManager().registerEvents(new StatusListener(effectslist, this), this);
+		getServer().getPluginManager().registerEvents(new StatusListener(effectslist, this, amountOfParticlesHearth), this);
 		getServer().getPluginManager().registerEvents(new ListenerNightmares(this, nightmareList), this);
 		getServer().getPluginManager().registerEvents(new LightningCreeperListener(LightningCreeperIsEnabled, creeperProbConfig,this), this);
 		getServer().getPluginManager().registerEvents(new SteveArrowsListener(this),this);
 		getServer().getPluginManager().registerEvents(new ListenerSnow(this, isSnowEnabledConfig), this);
+		
 		
 		this.getCommand("bestiakit").setExecutor(new CommandExecutioner(this));
 	} 

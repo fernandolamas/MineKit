@@ -36,8 +36,9 @@ public class StatusListener implements Listener {
 	boolean isAllowedArrowEffects = true;
 	boolean isAllowedRespawnEffects = true;
 	boolean isAllowedTeleportEffects = true;
+	private int amountOfParticlesConfig = 2;
 
-	public StatusListener(List<String> effects, Plugin plugin) {
+	public StatusListener(List<String> effects, Plugin plugin, String amountOfParticlesHearth) {
 		this.plugin = plugin;
 		for (String s : effects) {
 			if (s.equals("fight"))
@@ -48,6 +49,10 @@ public class StatusListener implements Listener {
 				isAllowedRespawnEffects = true;
 			if (s.equals("teleport"))
 				isAllowedTeleportEffects = true;
+		}
+		if (amountOfParticlesHearth != null)
+		{
+			amountOfParticlesConfig = Integer.parseInt(amountOfParticlesHearth);
 		}
 	}
 
@@ -179,6 +184,7 @@ public class StatusListener implements Listener {
 	public void playerGivesToAnotherPlayer(EntityPickupItemEvent e) {
 		if (!(e.getEntity() instanceof Player))
 			return;
+		
 
 		Player p = (Player) e.getEntity();
 
@@ -187,17 +193,21 @@ public class StatusListener implements Listener {
 			return;
 		Material m = pickedItem.getType();
 
+		//TODO: testear la config de particulas
 		if (m == Material.DIAMOND || m == Material.DANDELION || m == Material.POPPY || m == Material.SUNFLOWER
 				|| m == Material.ROSE_BUSH || m == Material.CORNFLOWER) {
-			for (int i = 0; i < 100; i++) {
-				Location pLoc = p.getLocation();
-				pLoc.setY(pLoc.getY() + 1);
+			// for (int i = 0; i < 100; i++) {
+			Location pLoc = p.getLocation();
+			pLoc.setY(pLoc.getY() + 1);
+			if(amountOfParticlesConfig > 0)
+			{
+				p.spawnParticle(Particle.HEART, pLoc, amountOfParticlesConfig, 0.5, 0.5, 0.5);				
+			}else if(amountOfParticlesConfig == 0) {
 				p.spawnParticle(Particle.HEART, pLoc, 2, 0.5, 0.5, 0.5);
 			}
+			// }
 		}
 
 	}
-
-
 
 }

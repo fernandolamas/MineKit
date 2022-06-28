@@ -5,6 +5,7 @@ allowedEffects:
   - arrow # when beign hit by an arrow
   - respawn # when respawning
   - teleport # right after teleporting by plugin, nether portal or end portal
+amountOfParticlesHearth: 2
 #Allows the player to climb {Number} times agaisnt a wall of stone
 pickaxeClimbingTimesAllowed: 1
 pickaxeClimbingDebugMode: False
